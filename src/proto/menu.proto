@@ -1,0 +1,67 @@
+syntax = "proto3";
+//this belongs to this microservice
+package menu;
+
+//Methods exposed to client
+service MenuService {
+  rpc getAll (Empty) returns (GetAllReply){}
+  rpc get (GetRequest) returns (GetReply){}
+  rpc create (CreateRequest) returns (CreateReply){}
+  rpc update ( GetReply ) returns (CreateReply){}
+  rpc delete ( DeleteRequest ) returns (Empty){}
+}
+
+message Empty {
+}
+
+message GetRequest {
+  string _id = 1;
+}
+
+message product {
+  string _id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+}
+
+
+message contentItem {
+  string title = 1;
+  repeated product products = 3;
+}
+
+
+
+message GetReply {
+  string _id = 1;
+  string name = 2;
+  string description = 3;
+  bool active = 4;
+  repeated contentItem contents = 5;
+}
+
+message GetAllReply {
+  repeated GetReply menus = 1;
+}
+
+message CreateRequest {
+  string name = 1;
+  string description = 2;
+  bool active = 3;
+  int32 owner = 4;
+}
+
+message CreateReply {
+  string _id = 1;
+}
+
+message UpdateRequest {
+  string _id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message DeleteRequest{
+  string _id = 1;
+}
