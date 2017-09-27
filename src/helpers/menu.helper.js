@@ -62,6 +62,24 @@ helper.get = function(call, callback){
   });
 }
 
+helper.getActiveMenuByOwner = function(call, callback){
+  Menu.findOne({owner: call.request.owner}).exec(function(err, resultMenu){
+    if(err){
+      return callback({message:'err'}, null);
+    }
+    console.log(resultMenu);
+    var returnMenu = formatMenu(resultMenu);
+
+    getProducts(resultMenu.contents, call.metadata).then(allData => {
+      console.log("Returned from Products function " + JSON.stringify(allData));
+      returnMenu.contents = allData;
+      return callback(null, returnMenu);
+    }, error => {
+      callback({message:JSON.stringify(error)},null);
+    })
+  });
+}
+
 helper.create = function(call, callback){
   //validation handled by database
   var newMenu = new Menu(call.request);

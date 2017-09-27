@@ -51,6 +51,9 @@ server.addService(proto.menu.MenuService.service, {
   },
   delete: function(call, callback){
     tableHelper.delete(call, callback);
+  },
+  getActiveMenuByOwner: function(call, callback){
+    tableHelper.getActiveMenuByOwner(call, callback);
   }
 
 });

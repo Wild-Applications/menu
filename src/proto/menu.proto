@@ -9,6 +9,7 @@ service MenuService {
   rpc create (CreateRequest) returns (CreateReply){}
   rpc update ( GetReply ) returns (CreateReply){}
   rpc delete ( DeleteRequest ) returns (Empty){}
+  rpc getActiveMenuByOwner (OwnerRequest) returns (GetReply){}
 }
 
 message Empty {
@@ -16,6 +17,10 @@ message Empty {
 
 message GetRequest {
   string _id = 1;
+}
+
+message OwnerRequest {
+  int32 owner = 1;
 }
 
 message product {
