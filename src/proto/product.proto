@@ -26,6 +26,7 @@ message GetReply {
   string name = 2;
   string description = 3;
   double price = 4;
+  bool in_stock = 5;
 }
 
 

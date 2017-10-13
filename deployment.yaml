@@ -22,7 +22,7 @@ metadata:
   labels:
     app: menu
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: menu
-        image: wildapps/menu:0.0.1
+        image: wildapplications/menu:latest
         ports:
         - containerPort: 50051
         env:
