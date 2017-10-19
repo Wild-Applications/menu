@@ -54,6 +54,9 @@ server.addService(proto.menu.MenuService.service, {
   },
   getActiveMenuByOwner: function(call, callback){
     tableHelper.getActiveMenuByOwner(call, callback);
+  },
+  makeActive: function(call, callback){
+    tableHelper.makeActive(call, callback);
   }
 
 });

@@ -1,7 +1,8 @@
 
 //imports
 var jwt = require('jsonwebtoken'),
-Menu = require('../models/menu.schema.js');
+Menu = require('../models/menu.schema.js')
+Active = require('../models/active.schema.js');
 
 
 
@@ -21,22 +22,31 @@ helper.getAll = function(call, callback){
         return callback({message:'err'}, null);
       }
 
-      var results = [];
-      resultMenus.forEach(function(menu){
-        results[results.length] = formatMenu(menu, call);
-      });
+      Active.findOne({owner: token.sub}, function(err, activeId){
+        if(err || !activeId){
+          activeId = "";
+        }else{
+          activeId = activeId.menu;
+        }
+        var results = [];
+        resultMenus.forEach(function(menu){
+          results[results.length] = formatMenu(menu, activeId, call);
+        });
 
-      return callback(null, results);
+        return callback(null, results);
+      });
     })
   });
 }
 
-function formatMenu(menu){
+function formatMenu(menu, activeId){
   var formatted = {};
   formatted._id = menu._id.toString();
   formatted.name = menu.name;
   formatted.description = menu.description;
-  formatted.active = menu.active;
+  if(activeId){
+    formatted.active = (menu._id.toString() == activeId.toString());
+  }
   return formatted;
 }
 
@@ -63,20 +73,33 @@ helper.get = function(call, callback){
 }
 
 helper.getActiveMenuByOwner = function(call, callback){
-  Menu.findOne({owner: call.request.owner}).exec(function(err, resultMenu){
-    if(err){
-      return callback({message:'err'}, null);
+  console.log('got here');
+  Active.findOne({owner:call.request.owner}, function(activeErr, result){
+    if(activeErr){
+      console.log(activeErr);
+      callback({message:'error retrieving active menu'}, null);
     }
-    console.log(resultMenu);
-    var returnMenu = formatMenu(resultMenu);
+    if(result){
+      console.log('active menu found');
+      Menu.findOne({_id: result.menu}, function(menuErr, resultMenu){
+        if(menuErr){
+          console.log('menu find err');
+          return callback({message:'err'}, null);
+        }
+        console.log(resultMenu);
+        var returnMenu = formatMenu(resultMenu);
 
-    getProducts(resultMenu.contents, call.metadata).then(allData => {
-      console.log("Returned from Products function " + JSON.stringify(allData));
-      returnMenu.contents = allData;
-      return callback(null, returnMenu);
-    }, error => {
-      callback({message:JSON.stringify(error)},null);
-    })
+        getProducts(resultMenu.contents, call.metadata).then(allData => {
+          console.log("Returned from Products function " + JSON.stringify(allData));
+          returnMenu.contents = allData;
+          return callback(null, returnMenu);
+        }, error => {
+          callback({message:JSON.stringify(error)},null);
+        })
+      })
+    }else{
+      callback({message:'error retrieving active menu'}, null);
+    }
   });
 }
 
@@ -125,6 +148,30 @@ helper.delete = function(call, callback){
 
       return callback(null, {});
     })
+  });
+}
+
+helper.makeActive = function(call, callback){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
+    if(err){
+      return callback({message:'error reading token'},null);
+    }
+    Active.findOne({owner: token.sub}, function(activeMenuRetrieveError, active){
+      console.log(active);
+      if(activeMenuRetrieveError){
+        callback({message:'Error finding the active menu for this owner'},null);
+      }
+      if(!active){
+        active = new Active({owner:token.sub});
+      }
+      active.menu = call.request._id;
+      active.save(function(err){
+        if(err){
+          callback({message:'error saving the new active menu'},null);
+        }
+        callback(null,{madeActive:true});
+      });
+    });
   });
 }
 

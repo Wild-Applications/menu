@@ -31,6 +31,7 @@ spec:
       containers:
       - name: menu
         image: wildapplications/menu:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 50051
         env:
