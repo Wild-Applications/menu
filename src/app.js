@@ -49,6 +49,9 @@ server.addService(proto.menu.MenuService.service, {
   update: function(call, callback){
     tableHelper.update(call,callback);
   },
+  updateContents: function(call, callback){
+    tableHelper.update(call,callback);
+  }
   delete: function(call, callback){
     tableHelper.delete(call, callback);
   },

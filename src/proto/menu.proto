@@ -8,6 +8,7 @@ service MenuService {
   rpc get (GetRequest) returns (GetReply){}
   rpc create (CreateRequest) returns (CreateReply){}
   rpc update ( UpdateRequest ) returns (CreateReply){}
+  rpc updateContents (Contents) returns (CreateReply){}
   rpc delete ( DeleteRequest ) returns (Empty){}
   rpc getActiveMenuByOwner (OwnerRequest) returns (GetReply){}
   rpc makeActive (ActiveRequest) returns (ActiveReply){}
@@ -46,7 +47,10 @@ message contentItem {
   repeated product products = 3;
 }
 
-
+message Contents{
+  string _id = 1;
+  repeated contentItem contents = 2;
+}
 
 message GetReply {
   string _id = 1;
