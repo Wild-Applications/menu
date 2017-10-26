@@ -7,7 +7,7 @@ service MenuService {
   rpc getAll (Empty) returns (GetAllReply){}
   rpc get (GetRequest) returns (GetReply){}
   rpc create (CreateRequest) returns (CreateReply){}
-  rpc update ( GetReply ) returns (CreateReply){}
+  rpc update ( UpdateRequest ) returns (CreateReply){}
   rpc delete ( DeleteRequest ) returns (Empty){}
   rpc getActiveMenuByOwner (OwnerRequest) returns (GetReply){}
   rpc makeActive (ActiveRequest) returns (ActiveReply){}
@@ -46,24 +46,14 @@ message contentItem {
   repeated product products = 3;
 }
 
-message contents {
-  repeated contentItem contents = 1;
-}
+
 
 message GetReply {
   string _id = 1;
-  oneof name_oneof{
-    string name = 2;
-  }
-  oneof description_oneof{
-    string description = 3;
-  }
-  oneof active_oneof{
-    bool active = 4;
-  }
-  oneof content_oneof{
-    contents contents = 5;
-  }
+  string name = 2;
+  string description = 3;
+  bool active = 4;
+  repeated contentItem contents = 5;
 }
 
 message GetAllReply {
@@ -83,9 +73,15 @@ message CreateReply {
 
 message UpdateRequest {
   string _id = 1;
-  string name = 2;
-  string description = 3;
-  bool active = 4;
+  oneof name_oneof{
+    string name = 2;
+  }
+  oneof description_oneof{
+    string description = 3;
+  }
+  oneof active_oneof{
+    bool active = 4;
+  }
 }
 
 message DeleteRequest{
