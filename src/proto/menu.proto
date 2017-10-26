@@ -50,10 +50,18 @@ message contentItem {
 
 message GetReply {
   string _id = 1;
-  string name = 2;
-  string description = 3;
-  bool active = 4;
-  repeated contentItem contents = 5;
+  oneof name_oneof{
+    string name = 2;
+  }
+  oneof description_oneof{
+    string description = 3;
+  }
+  oneof active_oneof{
+    bool active = 4;
+  }
+  oneof content_oneof{
+    repeated contentItem contents = 5;
+  }
 }
 
 message GetAllReply {
