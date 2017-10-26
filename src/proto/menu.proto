@@ -46,7 +46,9 @@ message contentItem {
   repeated product products = 3;
 }
 
-
+message contents {
+  repeated contentItem contents = 1;
+}
 
 message GetReply {
   string _id = 1;
@@ -60,7 +62,7 @@ message GetReply {
     bool active = 4;
   }
   oneof content_oneof{
-    repeated contentItem contents = 5;
+    contents contents = 5;
   }
 }
 
