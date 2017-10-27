@@ -39,6 +39,7 @@ message product {
   string description = 3;
   double price = 4;
   bool in_stock = 5;
+  bool age_restricted = 6;
 }
 
 
