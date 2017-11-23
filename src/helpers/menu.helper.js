@@ -5,7 +5,9 @@ Menu = require('../models/menu.schema.js')
 Active = require('../models/active.schema.js');
 
 
-
+var grpc = require("grpc");
+var productDescriptor = grpc.load(__dirname + '/../proto/product.proto').product;
+var productClient = new productDescriptor.ProductService('service.product:1295', grpc.credentials.createInsecure());
 //var jwt = require('jsonwebtoken');
 //var tokenService = require('bleuapp-token-service').createTokenHandler('service.token', '50051');
 
@@ -104,14 +106,29 @@ helper.getActiveMenuByOwner = function(call, callback){
 }
 
 helper.create = function(call, callback){
-  //validation handled by database
-  var newMenu = new Menu(call.request);
-  newMenu.save(function(err, result){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      console.log(err);
-      return callback({message:'err'},null);
+      return callback({message:err},null);
     }
-    return callback(null, {_id: result._id.toString()});
+    //validation handled by database
+    var toCreate = {};
+    toCreate.owner = token.sub;
+    toCreate.name = call.request.name;
+    toCreate.description = call.request.description;
+    if(call.request.contents){
+      toCreate.contents = call.request.contents;
+    }
+    if(call.request.active){
+      toCreate.active = call.request.active;
+    }
+    var newMenu = new Menu(toCreate);
+    newMenu.save(function(err, result){
+      if(err){
+        console.log(err);
+        return callback({message:'err'},null);
+      }
+      return callback(null, {_id: result._id.toString()});
+    });
   });
 }
 
@@ -176,9 +193,7 @@ helper.makeActive = function(call, callback){
 }
 
 function getProducts(contentsObj, metadata){
-  var grpc = require("grpc");
-  var productDescriptor = grpc.load(__dirname + '/../proto/product.proto').product;
-  var productClient = new productDescriptor.ProductService('service.product:1295', grpc.credentials.createInsecure());
+
 
   var productsCall = function(section, metadata){
     return new Promise(function(resolve, reject){
