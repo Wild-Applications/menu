@@ -1,0 +1,10 @@
+{
+  "0001": {"message": "Unable to retrieve menu from database", "code": 500},
+  "0002": {"message": "Invalid credentials", "code": 401},
+  "0003": {"message": "Unable to get contents of menu", "code":500},
+  "0004": {"message": "Unable to get active menu", "code":500},
+  "0005": {"message": "Unable to create new menu", "code": 500},
+  "0006": {"message": "Unable to update menu", "code": 500},
+  "0007": {"message": "Unable to delete menu", "code": 500},
+  "0008": {"message": "Unable to make menu active", "code": 500}
+}

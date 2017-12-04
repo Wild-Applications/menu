@@ -17,11 +17,11 @@ helper.getAll = function(call, callback){
   //protected route so verify token;
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0002'],null);
     }
     Menu.find({ owner: token.sub}).sort({active: -1}).exec(function(err, resultMenus){
       if(err){
-        return callback({message:'err'}, null);
+        return callback(errors['0001'], null);
       }
 
       Active.findOne({owner: token.sub}, function(err, activeId){
@@ -55,52 +55,44 @@ function formatMenu(menu, activeId){
 helper.get = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0002'],null);
     }
     Menu.findOne({ _id: call.request._id }).exec(function(err, resultMenu){
       if(err){
-        return callback({message:'err'}, null);
+        return callback(errors['0001'], null);
       }
       var returnMenu = formatMenu(resultMenu);
 
       getProducts(resultMenu.contents, call.metadata).then(allData => {
-        console.log("Returned from Products function " + JSON.stringify(allData));
         returnMenu.contents = allData;
         return callback(null, returnMenu);
       }, error => {
-        callback({message:'something went wrong when getting products'},null);
+        callback(errors['0003'],null);
       })
     })
   });
 }
 
 helper.getActiveMenuByOwner = function(call, callback){
-  console.log('got here');
   Active.findOne({owner:call.request.owner}, function(activeErr, result){
     if(activeErr){
-      console.log(activeErr);
-      callback({message:'error retrieving active menu'}, null);
+      callback(errors['0004'], null);
     }
     if(result){
-      console.log('active menu found');
       Menu.findOne({_id: result.menu}, function(menuErr, resultMenu){
         if(menuErr){
-          console.log('menu find err');
-          return callback({message:'err'}, null);
+          return callback(errors['0004'], null);
         }
-        console.log(resultMenu);
         var returnMenu = formatMenu(resultMenu);
-
         getProducts(resultMenu.contents, call.metadata).then(allData => {
-          console.log("Returned from Products function " + JSON.stringify(allData));
           returnMenu.contents = allData;
           return callback(null, returnMenu);
         }, error => {
-          callback({message:JSON.stringify(error)},null);
+          callback(errors['0003'],null);
         })
       })
     }else{
-      callback({message:'error retrieving active menu'}, null);
+      callback(errors['0004'], null);
     }
   });
 }
@@ -108,7 +100,7 @@ helper.getActiveMenuByOwner = function(call, callback){
 helper.create = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0002'],null);
     }
     //validation handled by database
     var toCreate = {};
@@ -124,8 +116,7 @@ helper.create = function(call, callback){
     var newMenu = new Menu(toCreate);
     newMenu.save(function(err, result){
       if(err){
-        console.log(err);
-        return callback({message:'err'},null);
+        return callback(errors['0005'],null);
       }
       return callback(null, {_id: result._id.toString()});
     });
@@ -135,13 +126,12 @@ helper.create = function(call, callback){
 helper.update = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0002'],null);
     }
 
     Menu.findOneAndUpdate({ _id: call.request._id}, call.request, function(err, menuReply){
       if(err){
-        console.log(err);
-        return callback({message:'err'}, null);
+        return callback(errors['0006'], null);
       }
       var menuToReturn = {};
       menuToReturn._id = menuReply._id.toString();
@@ -153,14 +143,12 @@ helper.update = function(call, callback){
 helper.delete = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:err},null);
+      return callback(errors['0002'],null);
     }
 
     Menu.findByIdAndRemove(call.request._id, function(err, menuReply){
       if(err){
-        console.log(err);
-
-        return callback({message:'err'}, null);
+        return callback(errors['0007'], null);
       }
 
       return callback(null, {});
@@ -171,12 +159,11 @@ helper.delete = function(call, callback){
 helper.makeActive = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      return callback({message:'error reading token'},null);
+      return callback(errors['0002'],null);
     }
     Active.findOne({owner: token.sub}, function(activeMenuRetrieveError, active){
-      console.log(active);
       if(activeMenuRetrieveError){
-        callback({message:'Error finding the active menu for this owner'},null);
+        return callback(errors['0008'],null);
       }
       if(!active){
         active = new Active({owner:token.sub});
@@ -184,7 +171,7 @@ helper.makeActive = function(call, callback){
       active.menu = call.request._id;
       active.save(function(err){
         if(err){
-          callback({message:'error saving the new active menu'},null);
+          return callback(errors['0008'],null);
         }
         callback(null,{madeActive:true});
       });
@@ -193,8 +180,6 @@ helper.makeActive = function(call, callback){
 }
 
 function getProducts(contentsObj, metadata){
-
-
   var productsCall = function(section, metadata){
     return new Promise(function(resolve, reject){
       productClient.getBatch(section.products, metadata, function(err, results){
@@ -203,7 +188,6 @@ function getProducts(contentsObj, metadata){
         var test = {};
         test.title = section.title;
         test.products = results.products;
-        console.log("Results " + JSON.stringify(results));
         return resolve(test);
       });
     })
