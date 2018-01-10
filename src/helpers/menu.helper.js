@@ -2,7 +2,8 @@
 //imports
 var jwt = require('jsonwebtoken'),
 Menu = require('../models/menu.schema.js')
-Active = require('../models/active.schema.js');
+Active = require('../models/active.schema.js'),
+errors = require('../errors/errors.json');
 
 
 var grpc = require("grpc");
