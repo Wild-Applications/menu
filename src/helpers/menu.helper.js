@@ -127,6 +127,7 @@ helper.create = function(call, callback){
 helper.update = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
+      console.log(err);
       return callback(errors['0002'],null);
     }
 
