@@ -154,9 +154,18 @@ helper.delete = function(call, callback){
       if(err){
         return callback(errors['0007'], null);
       }
-      console.log(menuReply);
 
-      return callback(null, {});
+      //need to check if this was the active menu
+      if(menuReply){
+        Active.findOneAndRemove({_id : menuReply._id}, function(err, activeReply){
+          if(err){
+            //weve already deleted the menu so it doesnt matter too much if this failed
+          }
+          return callback(null, {});
+        })
+      }else{
+        return callback(null, {});
+      }
     })
   });
 }
@@ -170,7 +179,7 @@ helper.makeActive = function(call, callback){
       if(activeMenuRetrieveError){
         return callback(errors['0008'],null);
       }
-      
+
       if(!active){
         active = new Active({owner:token.sub});
       }
