@@ -170,6 +170,7 @@ helper.makeActive = function(call, callback){
       if(activeMenuRetrieveError){
         return callback(errors['0008'],null);
       }
+      
       if(!active){
         active = new Active({owner:token.sub});
       }
