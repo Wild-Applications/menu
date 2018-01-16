@@ -154,6 +154,7 @@ helper.delete = function(call, callback){
       if(err){
         return callback(errors['0007'], null);
       }
+      console.log(menuReply);
 
       return callback(null, {});
     })
