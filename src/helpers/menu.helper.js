@@ -160,15 +160,21 @@ helper.delete = function(call, callback){
 
       //need to check if this was the active menu
       if(menuReply){
+        console.log('menu existed;');
+        console.log('deleting active now');
         Active.findOneAndRemove({_id : menuReply._id}, function(err, activeReply){
           if(err){
+            console.log('active err', err);
             //weve already deleted the menu so it doesnt matter too much if this failed
           }
           if(activeReply){
+            console.log('active menu was found', activeReply);
             premisesClient.close({}, call.metadata, (err, response) => {
               if(err){
+                console.log('close error');
                 //again there isnt much we can do.
               }
+              console.log('closed');
               return callback(null, {});
             });
           }else{
