@@ -174,6 +174,7 @@ helper.delete = function(call, callback){
                 console.log('close error');
                 //again there isnt much we can do.
               }
+              
               console.log('closed');
               return callback(null, {});
             });
