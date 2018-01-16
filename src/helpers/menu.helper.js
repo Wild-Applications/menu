@@ -9,6 +9,9 @@ errors = require('../errors/errors.json');
 var grpc = require("grpc");
 var productDescriptor = grpc.load(__dirname + '/../proto/product.proto').product;
 var productClient = new productDescriptor.ProductService('service.product:1295', grpc.credentials.createInsecure());
+
+var premisesDescriptor = grpc.load(__dirname + '/../proto/premises.proto').premises;
+var premisesClient = new premisesDescriptor.PremisesService('service.premises:1295', grpc.credentials.createInsecure());
 //var jwt = require('jsonwebtoken');
 //var tokenService = require('bleuapp-token-service').createTokenHandler('service.token', '50051');
 
@@ -161,8 +164,17 @@ helper.delete = function(call, callback){
           if(err){
             //weve already deleted the menu so it doesnt matter too much if this failed
           }
-          return callback(null, {});
-        })
+          if(activeReply){
+            premisesClient.close({}, call.metadata, (err, response) => {
+              if(err){
+                //again there isnt much we can do.
+              }
+              return callback(null, {});
+            });
+          }else{
+            return callback(null, {});
+          }
+        });
       }else{
         return callback(null, {});
       }
