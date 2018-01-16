@@ -162,7 +162,7 @@ helper.delete = function(call, callback){
       if(menuReply){
         console.log('menu existed;');
         console.log('deleting active now');
-        Active.findOneAndRemove({_id : menuReply._id}, function(err, activeReply){
+        Active.findOneAndRemove({menu : menuReply._id}, function(err, activeReply){
           if(err){
             console.log('active err', err);
             //weve already deleted the menu so it doesnt matter too much if this failed
