@@ -66,10 +66,9 @@ message GetAllReply {
 }
 
 message CreateRequest {
-  string name = 1;
+  required string name = 1;
   string description = 2;
   bool active = 3;
-  int32 owner = 4;
 }
 
 message CreateReply {

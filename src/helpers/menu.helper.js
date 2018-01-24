@@ -102,10 +102,8 @@ helper.getActiveMenuByOwner = function(call, callback){
 }
 
 helper.create = function(call, callback){
-  console.log('Got here');
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
-      console.log('verification error ', err);
       return callback(errors['0002'],null);
     }
     //validation handled by database
