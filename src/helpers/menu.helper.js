@@ -134,7 +134,21 @@ helper.update = function(call, callback){
       return callback(errors['0002'],null);
     }
 
-    Menu.findOneAndUpdate({ _id: call.request._id}, call.request, function(err, menuReply){
+    var objToSave = {};
+
+    if(call.metadata.get('present')){
+      //we have been passed information about what should be updated
+      var presentString = call.metadata.get('present').toString();
+      console.log(presentString.toString());
+      var present = presentString.split(',');
+      for(var item in present){
+        objToSave[present[item]] = call.request[present[item]];
+      }
+    }else{
+      objToSave = call.request;
+    }
+
+    Menu.findOneAndUpdate({ _id: call.request._id}, objToSave, function(err, menuReply){
       if(err){
         return callback(errors['0006'], null);
       }
