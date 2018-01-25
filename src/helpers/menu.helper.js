@@ -67,13 +67,16 @@ helper.get = function(call, callback){
       }
       console.log(resultMenu);
       var returnMenu = formatMenu(resultMenu);
-
-      getProducts(resultMenu.contents, call.metadata).then(allData => {
-        returnMenu.contents = allData;
+      if(resultMenu.contents.length > 0){
+        getProducts(resultMenu.contents, call.metadata).then(allData => {
+          returnMenu.contents = allData;
+          return callback(null, returnMenu);
+        }, error => {
+          callback(errors['0003'],null);
+        })
+      }else{
         return callback(null, returnMenu);
-      }, error => {
-        callback(errors['0003'],null);
-      })
+      }
     })
   });
 }
@@ -148,6 +151,8 @@ helper.update = function(call, callback){
     }else{
       objToSave = call.request;
     }
+
+    console.log(objToSave);
 
     Menu.findOneAndUpdate({ _id: call.request._id}, objToSave, function(err, menuReply){
       if(err){
