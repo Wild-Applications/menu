@@ -65,6 +65,7 @@ helper.get = function(call, callback){
       if(err){
         return callback(errors['0001'], null);
       }
+      console.log(resultMenu);
       var returnMenu = formatMenu(resultMenu);
 
       getProducts(resultMenu.contents, call.metadata).then(allData => {
