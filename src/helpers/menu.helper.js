@@ -237,7 +237,7 @@ helper.removeProduct = function(call, callback){
       return callback(errors['0002'],null);
     }
     console.log('owner', token.sub);
-    Menu.find({owner: token.sub, contents.products: call.request._id}, function(err, results){
+    Menu.find({owner: token.sub, 'contents.products': call.request._id}, function(err, results){
       if(err){
         console.log('err', err);
         return callback(errors['0007'], null);
