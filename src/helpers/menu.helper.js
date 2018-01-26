@@ -230,6 +230,24 @@ helper.deleteAll = function(call, callback){
   });
 }
 
+helper.removeProduct = function(call, callback){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
+    if(err){
+      return callback(errors['0002'],null);
+    }
+
+    Menu.find({owner: token.sub}, function(err, results){
+      if(err){
+        return callback(errors['0007'], null);
+      }
+      results.contents.update({}, { $pullAll: { products: call.request._id}}, function(err, result){
+        console.log(err);
+        console.log(result);
+      })
+    });
+  });
+}
+
 helper.makeActive = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
