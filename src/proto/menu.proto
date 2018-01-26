@@ -11,6 +11,7 @@ service MenuService {
   rpc updateContents (Contents) returns (CreateReply){}
   rpc delete ( DeleteRequest ) returns (Empty){}
   rpc deleteAll ( Empty ) returns (Empty){}
+  rpc removeProduct ( RemoveProductRequest ) returns ( Empty ){}
   rpc getActiveMenuByOwner (OwnerRequest) returns (GetReply){}
   rpc makeActive (ActiveRequest) returns (ActiveReply){}
 }
@@ -90,5 +91,9 @@ message UpdateRequest {
 }
 
 message DeleteRequest{
+  string _id = 1;
+}
+
+message RemoveProductRequest {
   string _id = 1;
 }
