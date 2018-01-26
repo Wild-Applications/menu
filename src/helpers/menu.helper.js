@@ -231,6 +231,7 @@ helper.deleteAll = function(call, callback){
 }
 
 helper.removeProduct = function(call, callback){
+  console.log('called');
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){
       return callback(errors['0002'],null);
@@ -240,6 +241,7 @@ helper.removeProduct = function(call, callback){
       if(err){
         return callback(errors['0007'], null);
       }
+      console.log(results);
       results.contents.update({}, { $pullAll: { products: call.request._id}}, function(err, result){
         console.log(err);
         console.log(result);
