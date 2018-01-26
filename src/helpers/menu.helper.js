@@ -237,7 +237,7 @@ helper.removeProduct = function(call, callback){
       return callback(errors['0002'],null);
     }
     console.log('owner', token.sub);
-    Menu.update({owner: token.sub, 'contents.products': call.request._id}, {$pullAll: { 'contents.products': [call.request._id]}}, function(err, results){
+    Menu.update({owner: token.sub, 'contents.products': call.request._id}, {$pullAll: { 'contents.$.products': [call.request._id]}}, function(err, results){
       if(err){
         console.log('err', err);
         return callback(errors['0007'], null);
