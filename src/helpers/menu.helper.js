@@ -237,12 +237,24 @@ helper.removeProduct = function(call, callback){
       return callback(errors['0002'],null);
     }
     console.log('owner', token.sub);
-    Menu.update({owner: token.sub, 'contents.products': call.request._id}, {$pullAll: { 'contents.$.products': [call.request._id]}}, function(err, results){
+
+    Menu.find({owner: token.sub, 'contents.products': call.request._id}, function(err, results){
       if(err){
         console.log('err', err);
         return callback(errors['0007'], null);
       }
-      console.log('RESULTS ',results);
+      console.log(results[0].contents.products.length);
+      Menu.update({owner: token.sub, 'contents.products': call.request._id}, {$pullAll: { 'contents.$.products': [call.request._id]}}, function(err, results){
+        if(err){
+          console.log('err', err);
+          return callback(errors['0007'], null);
+        }
+        console.log('RESULTS ',results);
+
+        Menu.find({owner: token.sub, 'contents.products': call.request._id}, function(err, results){
+          console.log(results[0].contents.products.length);
+        }
+      });
     });
   });
 }
