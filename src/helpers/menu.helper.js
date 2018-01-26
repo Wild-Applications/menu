@@ -201,6 +201,35 @@ helper.delete = function(call, callback){
   });
 }
 
+helper.deleteAll = function(call, callback){
+  jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
+    if(err){
+      return callback(errors['0002'],null);
+    }
+    Menu.remove({owner: token.sub}, function(err, menuReply){
+      if(err){
+        return callback(errors['0007'], null);
+      }
+      Active.remove({owner: token.sub}, function(err, activeReply){
+        if(err){
+          //weve already deleted the menu so it doesnt matter too much if this failed
+        }
+        if(activeReply){
+          premisesClient.close({}, call.metadata, (err, response) => {
+            if(err){
+              //again there isnt much we can do.
+            }
+
+            return callback(null, {});
+          });
+        }else{
+          return callback(null, {});
+        }
+      });
+    })
+  });
+}
+
 helper.makeActive = function(call, callback){
   jwt.verify(call.metadata.get('authorization')[0], process.env.JWT_SECRET, function(err, token){
     if(err){

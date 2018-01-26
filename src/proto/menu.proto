@@ -10,6 +10,7 @@ service MenuService {
   rpc update ( UpdateRequest ) returns (CreateReply){}
   rpc updateContents (Contents) returns (CreateReply){}
   rpc delete ( DeleteRequest ) returns (Empty){}
+  rpc deleteAll ( Empty ) returns (Empty){}
   rpc getActiveMenuByOwner (OwnerRequest) returns (GetReply){}
   rpc makeActive (ActiveRequest) returns (ActiveReply){}
 }
