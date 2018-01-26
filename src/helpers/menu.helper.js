@@ -253,7 +253,7 @@ helper.removeProduct = function(call, callback){
 
         Menu.find({owner: token.sub, 'contents.products': call.request._id}, function(err, results){
           console.log(results[0].contents.products.length);
-        }
+        })
       });
     });
   });
